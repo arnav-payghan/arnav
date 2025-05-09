@@ -1,17 +1,24 @@
-from flask import Flask as fk, render_template, request
+from flask import Flask, render_template, request
+from cli_logic import wordcount
 
+app = Flask(__name__)
+history = []
 
-app = fk(__name__)
+@app.route("/", methods=["GET", "POST"])
+def home():
+    if request.method == "POST":
+        cli_input = request.form["cli_input"]
+        command, *args = cli_input.strip().split(" ", 1)
+        result = ""
 
-@app.route("/")
-def hello():
-    return render_template("index.html")
+        if command == "wordcount":
+            if args:
+                result = wordcount.count_words(args[0])
+            else:
+                result = "Usage: wordcount \"your text here\""
+        else:
+            result = f"Unknown command: {command}"
 
-@app.route("/wordcount", methods=["POST"])
-def wordcount():
-    text = request.form["text"]
-    word_count = len(text.split())
-    return f"<h2>Word Count: {word_count}</h2><a href='/'>Back</a>"
+        history.append({"command": cli_input, "result": result})
 
-if __name__ == "__main__":
-    app.run(debug=True)
+    return render_template("index.html", history=history)

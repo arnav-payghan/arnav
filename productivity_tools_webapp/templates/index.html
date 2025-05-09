@@ -2,17 +2,22 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Productivity CLI</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>CLI Productivity Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <h1>Simple Productivity Tools</h1>
-    <div class="card">
-        <h3>Word Counter</h3>
-        <form action="/wordcount" method="POST">
-            <textarea name="text" rows="5" cols="40" placeholder="Enter text here..."></textarea>
-            <button type="submit">Count Words</button>
+    <div class="container">
+        <h1>Web CLI Productivity Tools</h1>
+
+        <div id="output-box">
+            {% for entry in history %}
+                <div class="entry"><b>$ {{ entry['command'] }}</b><br>{{ entry['result'] }}</div>
+            {% endfor %}
+        </div>
+
+        <form method="POST" action="/">
+            <input type="text" name="cli_input" id="cli_input" placeholder="Enter command here..." autofocus required>
+            <button type="submit">Run</button>
         </form>
     </div>
 </body>
